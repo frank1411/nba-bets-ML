@@ -82,7 +82,7 @@ export const parseExcelData = async () => {
                 team: row[7],
                 isWin: row[4] > 0,
             };
-        }).filter(item => item !== null && item.date !== null && !isNaN(item.date.getTime()));
+        }).filter(item => item !== null && item.date !== null && !isNaN(item.date.getTime()) && item.date.getFullYear() >= 2024);
 
         return { globalStats, tableData };
     } catch (error) {
