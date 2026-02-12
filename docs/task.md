@@ -1,0 +1,26 @@
+# Tareas para el Dashboard de Excel
+
+- [x] Planificación y Configuración Inicial
+    - [x] Crear estructura de tareas
+    - [x] Esperar archivo Excel del usuario
+- [x] Análisis de Datos
+    - [x] Identificar "zonas bien definidas" en el Excel
+    - [x] Definir esquema de datos para el dashboard
+- [x] Desarrollo de la Aplicación
+    - [x] Esperar aprobación del plan
+    - [x] Inicializar proyecto (Vite + React + CSS moderno)
+    - [x] Implementar parser de Excel (xlsx)
+    - [x] Crear componentes del dashboard (Grid, Cards, Charts)
+- [x] Interactividad y Refinamiento
+    - [x] Añadir filtros o elementos interactivos
+    - [x] Implementar paginación semanal en la tabla
+    - [x] Integrar navegación semanal con rangos de fecha libres
+    - [x] Simplificar cabecera (eliminar buscador, añadir trigger de calendario)
+    - [x] Implementar Calendario Custom (estilo almanaque, interactivo)
+    - [x] Pulir diseño (estética premium, animaciones)
+- [x] Verificación y Cierre
+    - [x] Validar funcionamiento con datos reales
+    - [x] Crear walkthrough
+- [/] Corrección de Errores (Bug Fixes)
+    - [x] Solucionar manejo de fechas en celdas agrupadas (forward-fill)
+    - [x] Verificar consistencia de datos tras la corrección
