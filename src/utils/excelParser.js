@@ -10,18 +10,32 @@ export const parseExcelData = async () => {
         const worksheet = workbook.Sheets[sheetName];
         const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        // Extract Global Metrics
-        // Based on analysis: Row 1015 has Picks, 1017 has Acierto, 1019 has Yield
-        const globalStats = {
-            picks: rawData[1015]?.[1] || 0,
-            acierto: (rawData[1017]?.[1] || 0) * 100, // Format as %
-            yield: (rawData[1019]?.[1] || 0) * 100,  // Format as %
-        };
+        // Dynamic Parsing Logic
+        let globalStats = { picks: 0, acierto: 0, yield: 0 };
+        let tableEndRow = rawData.length;
+
+        // 1. Find Global Stats by keywords in Column A (index 0)
+        rawData.forEach((row, index) => {
+            if (!row || !row[0]) return;
+            const label = row[0].toString().trim().toLowerCase();
+
+            if (label.includes('picks') || label === 'picks') {
+                globalStats.picks = row[1] || 0;
+                tableEndRow = Math.min(tableEndRow, index); // Data table must end before stats
+            } else if (label.includes('acierto') || label === 'acierto') {
+                globalStats.acierto = (row[1] || 0) * 100;
+            } else if (label.includes('yield') || label === 'yield') {
+                globalStats.yield = (row[1] || 0) * 100;
+            }
+        });
 
         // Process Table Data
         // Header is row 0. Data starts at row 1.
+        // We slice from row 1 up to the start of the stats section (tableEndRow)
         let lastValidDate = null;
-        const tableData = rawData.slice(1, 1011).map((row, index) => {
+        const potentialDataRows = rawData.slice(1, tableEndRow);
+
+        const tableData = potentialDataRows.map((row, index) => {
             // Excel Date Serial to JS Date
             let dateValue = row[1];
             let dateObj = null;
@@ -33,13 +47,26 @@ export const parseExcelData = async () => {
                 lastValidDate = dateObj;
             } else if (typeof dateValue === 'string' && dateValue.trim() !== '') {
                 const date = new Date(dateValue);
-                dateObj = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-                lastValidDate = dateObj;
+                // Handle DD/MM/YYYY or YYYY-MM-DD
+                if (dateValue.includes('/')) {
+                    const parts = dateValue.split('/');
+                    // Assuming DD/MM/YYYY
+                    if (parts.length === 3) dateObj = new Date(Date.UTC(parts[2], parts[1] - 1, parts[0]));
+                } else {
+                    dateObj = new Date(dateValue);
+                }
+
+                if (!dateObj || isNaN(dateObj)) dateObj = new Date(dateValue); // Fallback
+
+                if (dateObj && !isNaN(dateObj)) {
+                    dateObj = new Date(Date.UTC(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate()));
+                    lastValidDate = dateObj;
+                }
             } else {
                 dateObj = lastValidDate;
             }
 
-            // Only include row if at least we have a team/jugada (column H)
+            // Only include row if at least we have a team/jugada (column H -> index 7)
             if (!row[7]) return null;
 
             return {
@@ -55,7 +82,7 @@ export const parseExcelData = async () => {
                 team: row[7],
                 isWin: row[4] > 0,
             };
-        }).filter(item => item !== null && item.date !== null);
+        }).filter(item => item !== null && item.date !== null && !isNaN(item.date.getTime()));
 
         return { globalStats, tableData };
     } catch (error) {
