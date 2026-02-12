@@ -48,6 +48,15 @@ El dashboard se ha desplegado exitosamente en el entorno local (`/proyectos/nba-
 
 ![Dashboard Final Local](/Users/franklinsantaella/.gemini/antigravity/brain/a9949b96-a832-46d1-90b4-cc43928166a2/dashboard_rendered_successfully_1770917145876.png)
 
+### Corrección de Bugs Críticos
+Se han solucionado los problemas de navegación y estabilidad reportados:
+
+1. **Periodo Libre Estable:** Se corrigió el crash al cambiar de modo. Ahora se pueden seleccionar rangos personalizados sin problemas.
+![Periodo Libre Funcionando](/Users/franklinsantaella/.gemini/antigravity/brain/a9949b96-a832-46d1-90b4-cc43928166a2/periodo_libre_working_1770917914848.png)
+
+2. **Límite de Paginación:** Se implementó un filtro de fechas (>= 2024) para evitar la navegación infinita hacia el pasado (ej. 1902).
+![Límite Paginación](/Users/franklinsantaella/.gemini/antigravity/brain/a9949b96-a832-46d1-90b4-cc43928166a2/pagination_limit_reached_1770917977156.png)
+
 ## Cómo Ejecutar el Proyecto
 Para ver el dashboard en tu navegador, ejecuta los siguientes comandos en la terminal:
 
